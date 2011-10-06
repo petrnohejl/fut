@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+	<PreferenceCategory android:title="Server setting">
+		<EditTextPreference android:key="ipAddress" android:title="IP address" android:summary="Change IP separated by dots"></EditTextPreference>
+		<EditTextPreference android:summary="Change port number" android:key="port" android:title="Port"></EditTextPreference>
+	</PreferenceCategory>
+
+	<PreferenceCategory android:title="Delay setting">
+		<ListPreference android:summary="Control if device is stolen" android:title="Control delay" android:key="controlDelay" android:entryValues="@array/listValuesControl" android:entries="@array/listLabelControl" android:defaultValue="900"></ListPreference>
+		<ListPreference android:key="stolenDelay" android:title="Stolen delay" android:summary="When stolen, send data" android:entryValues="@array/listValuesStolen" android:entries="@array/listLabelStolen" android:defaultValue="60"></ListPreference>
+	</PreferenceCategory>
+	
+	<PreferenceCategory android:title="Data setting">
+		<fut.android.ListPreferenceMultiSelect android:defaultValue="#ALL#" android:entryValues="@array/listValuesData" android:entries="@array/listLabelData" android:title="Data types" android:key="data" android:summary="Choose data types to send"></fut.android.ListPreferenceMultiSelect>
+	</PreferenceCategory>
+	
+	<PreferenceCategory android:title="User Setting">
+		<EditTextPreference android:summary="Change your password" android:title="Password" android:key="password"></EditTextPreference>
+	</PreferenceCategory>
+</PreferenceScreen>

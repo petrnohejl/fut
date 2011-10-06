@@ -1,0 +1,66 @@
+--------------------------------------------------------------------------------
+
+FUT - jak projekt otestovat:
+
+Projekt se sklada ze tri casti: server, desktopovy klient a klient pro 
+platformu android. V nasledujicih HOWTO jsou cesty uvazovany relativne k 
+rozbalenemu adresari projektu.
+
+Step-by-step spusteni projektu FUT:
+	- Nejdrive je potreba pustit server, ktery obsluhuje klienta, mobilni
+	  zarizeni a komunikuje s databazi
+		~ server se binduje na port nastaveny v conf/fut.properties
+		  hodnotou futserver.port (implicitne nastaveny na 12345)
+		~ v adresari server/ je JAR soubor server.jar, ktery se spusti
+		  prikazem "java -jar server.jar"
+		~ databaze se spousti automaticky zaroven se serverem
+		~ !!!PORT SERVERU MUSI BYT DOSTUPNY Z MOBILNIHO ZARIZENI!!! 
+		  (nejlepe na verjne IP adrese, spolecny subnet)
+
+	- Na klientu si musime vytvorit uzivatelsky profil
+		~ v souboru client/conf/fut_client.properties je zadouci nastavit 
+		  hodnoty
+		  pro pripojeni na server
+			* futclient.host je DNS jmeno nebo IP adresa stroje, na
+			  nemz server bezi (pro testovani localhost)
+			* futclient.port je port, na kterem bezi FUT server
+  			  (implicitne 12345)
+		~ v adresari client/ je JAR soubor client.jar, ktery se spusti
+		  prikazem "java -jar client.jar"
+			* uzivatelske jmeno je v email formatu
+			* po uspesne registraci je uzivatel prihlasen do
+			  jednoducheho, zakladniho gui, kde si muze prohlizet
+			  data sveho telefonu, pozici a zapinat/vypinat stolen
+			  mode a alarm
+
+	- Nyni je potreba nainstalovat aplikaci do mobilniho zarizeni s platformou
+	  android (testovano na Eclaire 2.1 a Froyo 2.2)
+		* Soubor android/fut.apk je instalacni balik pro android, po
+		  nahrani a spusteni se sam nainstaluje do mobilu
+		* Pri prvnim spusteni aplikace FUT na mobilnim zarizeni je treba
+		  vytvorit lokalni ucet na telefonu, udaje se musi shodovat
+		  s uctem vytvorenym pres klienta
+		* Pri dalsim logovani se pouzije opet stejny ucet, udaje o uctu
+		  jsou ulozeny lokalne a relevance uctu vuci serveru je
+		  overovana az pri spravnem nastaveni udaju o serveru
+		* Udaje o serveru se nastavuji po uspesne registraci/logovani
+		  v polickach "IP address" a "Port"
+		* Pro testovani je vhodne nastavit prodlevu cekajicih smycek
+		  na co nejnizsi hodnoty (Control mode 30 seconds,
+		  Stolen mode 10 seconds)
+		* Dale se nastavje, ktera data se odesilaji pri stolen modu
+		* Pri spravne zadanych parametrech serveru se vypise, ze
+		  zarizeni se pripojilo k serveru
+
+V teto chvili bezi pollingova smycka kontrolujici stolen mod na serveru. Ten se
+zapne z desktopoveho klienta z menu. Pri stolen je mozne pustit alarm a zase
+vypnout. Muzeme si nechat vypsat udaje o telefonu a jeho posledni GPS
+souradnice. Smycka bezi na telefonu v pozadi jako service. Tato service je
+take spustena pri dalsim bootu telefonu.
+
+Pro testovani je k dispozici take server dawn.ynet.sk na verejne IP 
+147.175.167.212, kde server bezi na portu 12345. Je take naplnena databaze 
+testovacimi daty pro usera "test@test" s heslem "test". Tato databaze je take
+soucasti odevzdanych dat.
+
+--------------------------------------------------------------------------------

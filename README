@@ -1,0 +1,12 @@
+--------------------------------------------------------------------------------
+
+FUT
+(c) 2010 Petr Nohejl, Peter Bielik, Jakub Libosvár, Petr Panáček
+
+Projekt FUT byl vytvořen v rámci předmětu TAM (Tvorba aplikací pro mobilní
+zařízení) na FIT VUT v Brně. Cílem práce bylo vytvořit systém pro sledování a
+nalezení ukradeného/ztraceného telefonu. Mobilní klient je určen pro platformu
+Android. Server a desktop klient jsou naprogramovány v jazyce Java. Více 
+informací naleznete v dokumentaci.
+
+--------------------------------------------------------------------------------

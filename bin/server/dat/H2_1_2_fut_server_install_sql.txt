@@ -1,0 +1,120 @@
+--#  !! do not edit these lines !! --
+--# instalation script for FUT SERVER. --
+--# meta version: 1.0.0 --
+--# meta database: H2  --
+--# author : Peter Bielik <petsof@gmail.com> --
+
+
+-- TODO :  http://www.sqlteam.com/article/identity-and-primary-keys
+-- TODO :  http://net.tutsplus.com/tutorials/other/top-20-mysql-best-practices/
+
+
+create table  if not exists users (
+    id bigint auto_increment(1, 1) primary key,
+    username varchar(254) not null, -- email as a username !
+    --- TODO delete >> hash varchar(40) not null,  -- hash of user password MD5 : 32 byte, SHA1 : 40 byte
+    key varchar(40) not null,  -- the key used to encrypt connection
+    constraint uc_username unique(username) 
+);
+
+-- TODO mcc + mnc >> operator zluzcit
+create table if not exists device (
+    id bigint auto_increment(1, 1) primary key,
+    imei bigint not null,  -- 15 digit long number, e.g: 350077523237513
+    imsi bigint not null, -- e.g: 262013564857956 < 9223372036854775807 == Long.MAX_VALUE
+    sim varchar(25) not null,
+    operator int not null,
+    stolen tinyint not null default 0,  -- 0 == not stolen, > 0 == stolen
+    users_id bigint not null ,
+    foreign key(users_id)  references users(id) on delete cascade
+);
+
+
+create table if not exists data_type (
+    id bigint auto_increment(1, 1) primary key,
+    type varchar(32) not null
+);
+
+
+create table if not exists files ( 
+    id bigint auto_increment(1, 1) primary key,
+    filename varchar(1024) not null,
+    meta varchar(4096) null,-- other, optional text based structured data. reserved for future use
+    data blob(32M) null,
+    time timestamp not null,
+    data_type_id bigint not null,
+    device_id bigint not null,
+    foreign key (data_type_id) references data_type(id),
+    foreign key (device_id) references device(id) on delete cascade
+);
+
+
+create table if not exists  properties (
+    id bigint auto_increment(1, 1) primary key,
+    name varchar(40) not null,
+    value varchar(128) null,
+    users_id bigint not null ,
+    foreign key(users_id)  references users(id) on delete cascade
+);
+
+
+create table if not exists geo_source (
+    id bigint auto_increment(1, 1) primary key,
+    type varchar(8) not null
+);
+
+
+create table if not exists geodata ( 
+    id bigint auto_increment(1, 1) primary key,
+    longitude double,   -- zemepisna dlzka
+    latitude double,   -- zemepisna sirka
+    altitude double,   -- nadmorska vyska
+    time timestamp not null,
+    azimuth float,
+    speed float,
+    accuracy float,    
+    geo_source_id bigint not null,
+    device_id bigint not null,
+    foreign key (device_id) references device(id) on delete cascade,
+    foreign key (geo_source_id) references geo_source(id)
+);
+
+---- *************
+-- insert into device (imei, imsi, sim, operator, users_id) values (1, 2, '12323', 4, (select id from users where username = 'aa')) ;
+
+---- *************
+
+
+-- create table if not exists  transaction (
+--     id bigint auto_increment(1, 1) primary key,
+--     time timestamp not null,
+--     sync_id bigint not null,
+--     file_id bigint not null,
+--     device_id bigint not null,
+--     foreign key (device_id) references device(id) on delete cascade,
+--     foreign key (file_id) references files(id) on delete cascade
+-- );
+-- 
+------------------------[end of table definitions]------------------------------
+-- 
+----> Sequence to be used for sync_id in transaction
+-- create sequence if not exists sync_id_seq start with 1 increment by 1 cache 5 ;
+
+------------------------[initialisation data]-----------------------------------
+
+insert into geo_source (type) values ('gps');
+insert into geo_source (type) values ('network'); -- wifi + bts
+
+
+insert into data_type (type) values ('sms');
+insert into data_type (type) values ('history');
+insert into data_type (type) values ('contacts');
+insert into data_type (type) values ('accounts');
+insert into data_type (type) values ('calendar');
+
+alter user SA set password '1Administration' ;
+
+
+
+
+
